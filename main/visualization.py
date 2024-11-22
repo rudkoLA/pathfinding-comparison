@@ -34,3 +34,4 @@ def visualize_graph(edge_list, directed=False, path=None):
     plt.title('Візуалізація графу')
     plt.axis('off')
     plt.show()
+
