@@ -165,8 +165,7 @@ def bellman_ford(graph, start, goal):
     path.append(start)
     path.reverse()
 
-    end_time = time.time()
-    return path, end_time - start_time
+    return path
 
 def floyd_warshall(graph, start, end):
     """
@@ -179,8 +178,8 @@ def floyd_warshall(graph, start, end):
 
     Returns:
         tuple: (distance, path) where:
-               - distance (float): Shortest distance from start to end.
-               - path (list): List of nodes representing the shortest path, or None if no path exists.
+            - distance (float): Shortest distance from start to end.
+            - path (list): List of nodes representing the shortest path, or None if no path exists.
 
     Example:
         >>> graph = {
