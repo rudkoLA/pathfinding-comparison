@@ -2,7 +2,7 @@
 
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from algorithms import bfs, dfs, dijkstra, astar, bellman_ford
+from algorithms import bfs, dfs, dijkstra, astar, bellman_ford, spfa
 from graph_utils import read_graph_from_file, build_graph
 from visualization import visualize_graph
 import matplotlib.pyplot as plt
@@ -78,7 +78,8 @@ def run_algorithms(state, widgets):
         ('DFS', dfs),
         ('Алгоритм Дейкстри', dijkstra),
         ('Алгоритм A*', astar),
-        ('Алгоритм Беллмана-Форда', bellman_ford)
+        ('Алгоритм Беллмана-Форда', bellman_ford),
+        ('SPFA', spfa)
     ]
 
     widgets['output_text'].delete(1.0, tk.END)
