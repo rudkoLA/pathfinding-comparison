@@ -1,4 +1,6 @@
-"""Функції для аналізування часу виконання функцій"""
+"""
+Функції для аналізування часу виконання функцій
+"""
 
 from time import time
 
@@ -11,9 +13,7 @@ def time_algorithm(func, *args) -> float:
     """
     start_time = time()
 
-    func(*args)
-
-    return time() - start_time
+    return func(*args), time() - start_time
 
 def time_algorithm_with_functions(func, graph_func, node_func) -> list[float]:
     """
@@ -26,7 +26,11 @@ def time_algorithm_with_functions(func, graph_func, node_func) -> list[float]:
 
     graph = graph_func()
 
-    return time_algorithm(func, graph_func(), node_func(graph), node_func(graph))
+    start = node_func(graph)
+
+    end = node_func(graph)
+
+    return time_algorithm(func, graph, start, end)
 
 
 def time_algorithm_repeat(func, num: int, *args) -> list[float]:
@@ -67,5 +71,5 @@ if __name__ == '__main__':
     from algorithms import astar
 
     print(time_algorithm(astar, {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}, "A", "D"))
-    print(list(map(lambda x: round(x, 5), time_algorithm_repeat(astar, 10, \
+    print(list(map(lambda x: round(x[1], 5), time_algorithm_repeat(astar, 10, \
     {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}, "A", "D"))))
