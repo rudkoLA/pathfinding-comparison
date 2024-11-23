@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from algorithms import bfs, dfs, dijkstra, astar, bellman_ford, spfa
 from graph_utils import read_graph_from_file, build_graph
+from timing import time_algorithm
 from visualization import visualize_graph
 import matplotlib.pyplot as plt
 
@@ -87,7 +88,7 @@ def run_algorithms(state, widgets):
     state['paths'] = {}
 
     for name, algorithm in algorithms:
-        path, exec_time = algorithm(state['graph'], start, goal)
+        path, exec_time = time_algorithm(algorithm, state['graph'], start, goal)
         state['times'][name] = exec_time
         if path:
             state['paths'][name] = path

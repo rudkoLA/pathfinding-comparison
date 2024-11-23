@@ -1,5 +1,4 @@
 'створюємо алгоритми для пошуку шляхів в графах'
-import time
 
 def bfs(graph, start, goal):
     """
@@ -15,24 +14,21 @@ def bfs(graph, start, goal):
 
     Приклад:
     >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}
-    >>> bfs(graph, 'A', 'D')[0]
+    >>> bfs(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
-    start_time = time.time()
     visited = set()
     queue = [(start, [start])]
     while queue:
         vertex, path = queue.pop(0)
         if vertex == goal:
-            end_time = time.time()
-            return path, end_time - start_time
+            return path
         if vertex not in visited:
             visited.add(vertex)
             neighbors = graph.get(vertex, [])
             for neighbor in neighbors:
                 queue.append((neighbor, path + [neighbor]))
-    end_time = time.time()
-    return None, end_time - start_time
+    return None
 
 def dfs(graph, start, goal):
     """
@@ -48,24 +44,21 @@ def dfs(graph, start, goal):
 
     Приклад:
     >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}
-    >>> dfs(graph, 'A', 'D')[0]
+    >>> dfs(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
-    start_time = time.time()
     visited = set()
     stack = [(start, [start])]
     while stack:
         vertex, path = stack.pop()
         if vertex == goal:
-            end_time = time.time()
-            return path, end_time - start_time
+            return path
         if vertex not in visited:
             visited.add(vertex)
             neighbors = graph.get(vertex, [])
             for neighbor in neighbors:
                 stack.append((neighbor, path + [neighbor]))
-    end_time = time.time()
-    return None, end_time - start_time
+    return None
 
 def dijkstra(graph, start, goal):
     """
@@ -81,10 +74,9 @@ def dijkstra(graph, start, goal):
 
     Приклад:
     >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
-    >>> dijkstra(graph, 'A', 'D')[0]
+    >>> dijkstra(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
-    start_time = time.time()
     visited = set()
     queue = [(0, start, [start])]
 
@@ -92,16 +84,14 @@ def dijkstra(graph, start, goal):
         queue.sort(key=lambda x: x[0])
         cost, vertex, path = queue.pop(0)
         if vertex == goal:
-            end_time = time.time()
-            return path, end_time - start_time
+            return path
         if vertex not in visited:
             visited.add(vertex)
             neighbors = graph.get(vertex, [])
             for neighbor in neighbors:
                 if neighbor not in visited:
                     queue.append((cost + 1, neighbor, path + [neighbor]))
-    end_time = time.time()
-    return None, end_time - start_time
+    return None
 
 def astar(graph, start, goal):
     """
@@ -117,18 +107,16 @@ def astar(graph, start, goal):
 
     Приклад:
     >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
-    >>> astar(graph, 'A', 'D')[0]
+    >>> astar(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
-    start_time = time.time()
     visited = set()
     queue = [(0, start, [start])]
     while queue:
         queue.sort(key=lambda x: x[0])
         _, vertex, path = queue.pop(0)
         if vertex == goal:
-            end_time = time.time()
-            return path, end_time - start_time
+            return path
         if vertex not in visited:
             visited.add(vertex)
             neighbors = graph.get(vertex, [])
@@ -137,8 +125,7 @@ def astar(graph, start, goal):
                     cost_to_neighbor = len(path)
                     estimated_cost = cost_to_neighbor
                     queue.append((estimated_cost, neighbor, path + [neighbor]))
-    end_time = time.time()
-    return None, end_time - start_time
+    return None
 
 def bellman_ford(graph, start, goal):
     """
@@ -154,10 +141,9 @@ def bellman_ford(graph, start, goal):
 
     Приклад:
     >>> graph = {'A': ['B'], 'B': ['C'], 'C': ['A', 'D'], 'D': []}
-    >>> bellman_ford(graph, 'A', 'D')[0]
+    >>> bellman_ford(graph, 'A', 'D')
     ['A', 'B', 'C', 'D']
     """
-    start_time = time.time()
     distance = {vertex: float('inf') for vertex in graph}
     predecessor = {}
     distance[start] = 0
@@ -175,10 +161,10 @@ def bellman_ford(graph, start, goal):
         path.append(current_vertex)
         current_vertex = predecessor.get(current_vertex)
         if current_vertex is None:
-            end_time = time.time()
-            return None, end_time - start_time
+            return None
     path.append(start)
     path.reverse()
+
     end_time = time.time()
     return path, end_time - start_time
 
