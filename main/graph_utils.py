@@ -34,7 +34,7 @@ def read_graph_from_file(filename):
     """
     edge_list = []
     try:
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             for line in f:
                 line = line.strip()
                 if not line or line.startswith('#'):

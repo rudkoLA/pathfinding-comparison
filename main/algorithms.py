@@ -165,8 +165,7 @@ def bellman_ford(graph, start, goal):
     path.append(start)
     path.reverse()
 
-    end_time = time.time()
-    return path, end_time - start_time
+    return path
 
 def floyd_warshall(graph, start, end):
     """
