@@ -1,13 +1,13 @@
 'створюємо алгоритми для пошуку шляхів в графах'
 
-def bfs(graph: dict, start, end) -> tuple[list, int]:
+def bfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
     """
     :param graph: dict, A dictionary where keys are nodes and values are 
     lists of tuples (neighbor, weight).
-    :param start: The starting node.
-    :param end: The goal node.
+    :param start: int, The starting node.
+    :param end: int, The goal node.
 
-    :return: tuple[list, int], shortest path, which is presented in a 
+    :return: tuple[list[int], int], shortest path, which is presented in a 
     tuple (path: list of nodes, weight).
     >>> bfs({\
         1: [(2, 3), (3, 1)], \
@@ -16,7 +16,7 @@ def bfs(graph: dict, start, end) -> tuple[list, int]:
         4: [(3, 1), (6, 3)], \
         5: [(2, 4)], \
         6: [(4, 3), (3, 3)]\
-        }, 1, 6)
+        }, 1, 6)[0]
     ([1, 3, 6], 4)
     """
     queue = [([start], 0)]
@@ -35,16 +35,16 @@ def bfs(graph: dict, start, end) -> tuple[list, int]:
                 new_path = path + [neighbor]
                 queue.append((new_path, current_weight + weight))
 
-    return min(paths, key=lambda x: x[1])
+    return paths
 
-def dfs(graph: dict, start, end) -> tuple[list, int]:
+def dfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
     """
     :param graph: dict, A dictionary where keys are nodes and values are 
     lists of tuples (neighbor, weight).
-    :param start: The starting node.
-    :param end: The goal node.
+    :param start: int, The starting node.
+    :param end: int, The goal node.
 
-    :return: tuple[list, int], shortest path, which is presented in a 
+    :return: tuple[list[int], int], shortest path, which is presented in a 
     tuple (path: list of nodes, weight).
     >>> dfs({\
         1: [(2, 3), (3, 1)], \
@@ -56,7 +56,7 @@ def dfs(graph: dict, start, end) -> tuple[list, int]:
         }, 1, 6)
     ([1, 3, 6], 4)
     """
-    def dfs_algorithm(node, path: list, weight: int) -> tuple[list[int], int] | None:
+    def dfs_algorithm(node: int, path: list[int], weight: int) -> tuple[list[int], int] | None:
         path.append(node)
 
         if node == end:
@@ -67,14 +67,14 @@ def dfs(graph: dict, start, end) -> tuple[list, int]:
                 if neighbor not in path:
                     sub_result = dfs_algorithm(neighbor, path, weight + edge_weight)
                     if sub_result:
-                        if not result or sub_result[1] < result[1]:
+                        if result is None or sub_result[1] < result[1]:
                             result = sub_result
 
         path.pop()
-
         return result
 
     return dfs_algorithm(start, [], 0)
+
 
 def dijkstra(graph, start, goal):
     """
@@ -194,8 +194,8 @@ def floyd_warshall(graph, start, end):
 
     Returns:
         tuple: (distance, path) where:
-               - distance (float): Shortest distance from start to end.
-               - path (list): List of nodes representing the shortest path, or None if no path exists.
+            - distance (float): Shortest distance from start to end.
+            - path (list): List of nodes representing the shortest path, or None if no path exists.
 
     Example:
         >>> graph = {
@@ -299,4 +299,4 @@ def spfa(graph, start, end):
 
 if __name__ == '__main__':
     import doctest
-    print(doctest.testmod())
+    doctest.testmod()
