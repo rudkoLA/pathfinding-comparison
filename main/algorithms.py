@@ -1,64 +1,80 @@
 'створюємо алгоритми для пошуку шляхів в графах'
 
-def bfs(graph, start, goal):
+def bfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
     """
-    Виконує пошук у ширину для знаходження найкоротшого шляху
+    :param graph: dict, A dictionary where keys are nodes and values are 
+    lists of tuples (neighbor, weight).
+    :param start: int, The starting node.
+    :param end: int, The goal node.
 
-    Аргументи:
-        graph (dict): Граф, представленний у вигляді словника
-        start (str): Початкова вершина.
-        goal (str): Цільова вершина.
-
-    Повертає:
-        tuple: Кортеж, що містить шлях та час виконання.
-
-    Приклад:
-    >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [], 'D': []}
-    >>> bfs(graph, 'A', 'D')
-    ['A', 'B', 'D']
+    :return: tuple[list[int], int], shortest path, which is presented in a 
+    tuple (path: list of nodes, weight).
+    >>> bfs({\
+        1: [(2, 3), (3, 1)], \
+        2: [(1, 3), (5, 4)], \
+        3: [(4, 1), (6, 3)], \
+        4: [(3, 1), (6, 3)], \
+        5: [(2, 4)], \
+        6: [(4, 3), (3, 3)]\
+        }, 1, 6)[0]
+    ([1, 3, 6], 4)
     """
-    visited = set()
-    queue = [(start, [start])]
+    queue = [([start], 0)]
+    paths = []
+
     while queue:
-        vertex, path = queue.pop(0)
-        if vertex == goal:
-            return path
-        if vertex not in visited:
-            visited.add(vertex)
-            neighbors = graph.get(vertex, [])
-            for neighbor in neighbors:
-                queue.append((neighbor, path + [neighbor]))
-    return None
+        path, current_weight = queue.pop(0)
+        node = path[-1]
 
-def dfs(graph, start, goal):
+        if node == end:
+            paths.append((path, current_weight))
+            continue
+
+        for neighbor, weight in graph.get(node, []):
+            if neighbor not in path:
+                new_path = path + [neighbor]
+                queue.append((new_path, current_weight + weight))
+
+    return paths
+
+
+def dfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
     """
-    Виконує пошук у глибину для знаходження шляху
+    :param graph: dict, A dictionary where keys are nodes and values are 
+    lists of tuples (neighbor, weight).
+    :param start: int, The starting node.
+    :param end: int, The goal node.
 
-    Аргументи:
-        graph (dict): Граф, представлений у вигляді словника
-        start (str): Початкова вершина.
-        goal (str): Цільова вершина.
-
-    Повертає:
-        tuple: Кортеж, що містить шлях та час виконання.
-
-    Приклад:
-    >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [], 'D': []}
-    >>> dfs(graph, 'A', 'D')
-    ['A', 'B', 'D']
+    :return: tuple[list[int], int], shortest path, which is presented in a 
+    tuple (path: list of nodes, weight).
+    >>> dfs({\
+        1: [(2, 3), (3, 1)], \
+        2: [(1, 3), (5, 4)], \
+        3: [(4, 1), (6, 3)], \
+        4: [(3, 1), (6, 3)], \
+        5: [(2, 4)], \
+        6: [(4, 3), (3, 3)]\
+        }, 1, 6)
+    ([1, 3, 6], 4)
     """
-    visited = set()
-    stack = [(start, [start])]
-    while stack:
-        vertex, path = stack.pop()
-        if vertex == goal:
-            return path
-        if vertex not in visited:
-            visited.add(vertex)
-            neighbors = graph.get(vertex, [])
-            for neighbor in neighbors:
-                stack.append((neighbor, path + [neighbor]))
-    return None
+    def dfs_algorithm(node: int, path: list[int], weight: int) -> tuple[list[int], int] | None:
+        path.append(node)
+
+        if node == end:
+            result = (list(path), weight)
+        else:
+            result = None
+            for neighbor, edge_weight in graph[node]:
+                if neighbor not in path:
+                    sub_result = dfs_algorithm(neighbor, path, weight + edge_weight)
+                    if sub_result:
+                        if result is None or sub_result[1] < result[1]:
+                            result = sub_result
+
+        path.pop()
+        return result
+
+    return dfs_algorithm(start, [], 0)
 
 def dijkstra(graph, start, goal):
     """
