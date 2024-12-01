@@ -13,7 +13,7 @@ def bfs(graph, start, goal):
         tuple: Кортеж, що містить шлях та час виконання.
 
     Приклад:
-    >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}
+    >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [], 'D': []}
     >>> bfs(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
@@ -43,7 +43,7 @@ def dfs(graph, start, goal):
         tuple: Кортеж, що містить шлях та час виконання.
 
     Приклад:
-    >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}
+    >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [], 'D': []}
     >>> dfs(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
@@ -73,7 +73,7 @@ def dijkstra(graph, start, goal):
         tuple: Кортеж, що містить шлях та час виконання.
 
     Приклад:
-    >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
+    >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [('D', 1)], 'D': []}
     >>> dijkstra(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
@@ -88,9 +88,9 @@ def dijkstra(graph, start, goal):
         if vertex not in visited:
             visited.add(vertex)
             neighbors = graph.get(vertex, [])
-            for neighbor in neighbors:
+            for neighbor, weight in neighbors:
                 if neighbor not in visited:
-                    queue.append((cost + 1, neighbor, path + [neighbor]))
+                    queue.append((cost + weight, neighbor, path + [neighbor]))
     return None
 
 def astar(graph, start, goal):
@@ -106,7 +106,7 @@ def astar(graph, start, goal):
         tuple: Кортеж, що містить шлях та час виконання.
 
     Приклад:
-    >>> graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
+    >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [('D', 1)], 'D': []}
     >>> astar(graph, 'A', 'D')
     ['A', 'B', 'D']
     """
@@ -120,9 +120,9 @@ def astar(graph, start, goal):
         if vertex not in visited:
             visited.add(vertex)
             neighbors = graph.get(vertex, [])
-            for neighbor in neighbors:
+            for neighbor, weight in neighbors:
                 if neighbor not in visited:
-                    cost_to_neighbor = len(path)
+                    cost_to_neighbor = len(path) + weight
                     estimated_cost = cost_to_neighbor
                     queue.append((estimated_cost, neighbor, path + [neighbor]))
     return None
@@ -140,7 +140,7 @@ def bellman_ford(graph, start, goal):
         tuple: Кортеж, що містить шлях та час виконання.
 
     Приклад:
-    >>> graph = {'A': ['B'], 'B': ['C'], 'C': ['A', 'D'], 'D': []}
+    >>> graph = {'A': [('B', 1)], 'B': [('C', 1)], 'C': [('A', 1), ('D', 1)], 'D': []}
     >>> bellman_ford(graph, 'A', 'D')
     ['A', 'B', 'C', 'D']
     """
@@ -150,9 +150,9 @@ def bellman_ford(graph, start, goal):
 
     for _ in range(len(graph) - 1):
         for vertex in graph:
-            for neighbor in graph[vertex]:
-                if distance[vertex] + 1 < distance[neighbor]:
-                    distance[neighbor] = distance[vertex] + 1
+            for neighbor, weight in graph[vertex]:
+                if distance[vertex] + weight < distance[neighbor]:
+                    distance[neighbor] = distance[vertex] + weight
                     predecessor[neighbor] = vertex
 
     path = []
@@ -241,7 +241,7 @@ def spfa(graph, start, end):
         tuple: Кортеж, що містить шлях та час виконання.
 
     Приклад:
-    >>> graph = {'A': ['B'], 'B': ['C'], 'C': ['A', 'D'], 'D': []}
+    >>> graph = {'A': [('B', 1)], 'B': [('C', 1)], 'C': [('A', 1), ('D', 1)], 'D': []}
     >>> spfa(graph, 'A', 'D')
     ['A', 'B', 'C', 'D']
     """
@@ -256,8 +256,8 @@ def spfa(graph, start, end):
     while queue:
         current_node = queue.pop()
 
-        for neighbor in graph[current_node]:
-            new_weight = distances[current_node] + 1
+        for neighbor, weight in graph[current_node]:
+            new_weight = distances[current_node] + weight
             old_weight = distances[neighbor]
 
             if new_weight < old_weight:
