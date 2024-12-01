@@ -1,75 +1,30 @@
-"""
-Функції для аналізування часу виконання функцій
-"""
+"Time"
 
-from time import time
+import time
+from typing import Callable, Dict, List, Tuple, Optional
 
-def time_algorithm(func, *args) -> float:
+def time_algorithm(algorithm: Callable, graph: Dict[str, List[Tuple[str, float]]], start: str, goal: str, **kwargs) -> Optional[Tuple[List[str], float, float]]:
     """
-    Функція для рахування часу виконання функції func для параметрів заданих у *args.
-    :param func: Callable, функція яку будеми тестити.
-    :param *args: Callable, аргументи якими будем тестити данну функцію.
-    :return: float, час який треба було функції щоб виконатись.
+    Вимірює час виконання алгоритму пошуку шляху.
+
+    Args:
+        algorithm (Callable): Алгоритм пошуку шляху.
+        graph (dict): Граф у форматі словника з вагами.
+        start (str): Початкова вершина.
+        goal (str): Цільова вершина.
+        **kwargs: Додаткові аргументи для алгоритму (наприклад, heuristic для A*).
+
+    Returns:
+        tuple[list[str], float, float]: Шлях, сумарна вага та час виконання.
+                                       Повертає None, якщо шляху немає.
     """
-    start_time = time()
+    start_time = time.perf_counter()
+    result = algorithm(graph, start, goal, **kwargs)
+    end_time = time.perf_counter()
+    exec_time = end_time - start_time
 
-    return func(*args), time() - start_time
-
-def time_algorithm_with_functions(func, graph_func, node_func) -> list[float]:
-    """
-    Функція для рахування часу виконання функції func з аргументами функцій graph_func та node_func.
-    :param func: Callable, функція яку будеми тестити.
-    :param graph_func: Callable, функція яка мала би генерувати граф для тестування.
-    :param node_func: Callable, функція яка мала би повертати одну точку з графа з graph_func.
-    :return: float, час який треба було функції щоб виконатись.
-    """
-
-    graph = graph_func()
-
-    start = node_func(graph)
-
-    end = node_func(graph)
-
-    return time_algorithm(func, graph, start, end)
-
-
-def time_algorithm_repeat(func, num: int, *args) -> list[float]:
-    """
-    Функція для повторного тестування данної функції func num разів з аргументами *args.
-    :param func: Callable, функція яку будеми тестити.
-    :param num: int, кількість виконання данної функції.
-    :param *args: Callable, аргументи якими будем тестити данну функцію.
-    :return: list[float], список часів виконання функції.
-    """
-    times = []
-
-    for _ in range(num):
-        times.append(time_algorithm(func, *args))
-
-    return times
-
-
-def time_algorithm_with_functions_repeat(func, num: int, graph_func, node_func) -> list[float]:
-    """
-    Функція для рахування часу виконання функції func з аргументами функцій graph_func та node_func.
-    :param func: Callable, функція яку будеми тестити.
-    :param num: int, кількість виконання данної функції.
-    :param graph_func: Callable, функція яка мала би генерувати граф для тестування.
-    :param node_func: Callable, функція яка мала би повертати одну точку з графа з graph_func.
-    :return: list[float], список часів виконання функції.
-    """
-    times = []
-
-    for _ in range(num):
-        times.append(time_algorithm_with_functions(func, graph_func, node_func))
-
-    return times
-
-
-
-if __name__ == '__main__':
-    from algorithms import astar
-
-    print(time_algorithm(astar, {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}, "A", "D"))
-    print(list(map(lambda x: round(x[1], 5), time_algorithm_repeat(astar, 10, \
-    {'A': ['B', 'C'], 'B': ['D'], 'C': [], 'D': []}, "A", "D"))))
+    if result:
+        path, total_weight = result
+        return (path, total_weight, exec_time)
+    else:
+        return None
