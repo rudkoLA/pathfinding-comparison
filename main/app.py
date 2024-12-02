@@ -1,4 +1,4 @@
-'''графічний інтерфейс'''
+'графічний інтерфейс'
 
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
@@ -188,7 +188,7 @@ def plot_times(times):
     execution_times = [t for t in times.values() if t is not None]
 
     if not execution_times:
-        return None
+        return
 
     plt.figure(figsize=(10, 6))
     plt.bar(algorithm_names, execution_times, color='skyblue')
