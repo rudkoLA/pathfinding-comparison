@@ -1,4 +1,6 @@
-'''Functions for working with files with graphs'''
+"""
+Functions for working with files with graphs.
+"""
 
 
 def read_graph_from_file(filename):
