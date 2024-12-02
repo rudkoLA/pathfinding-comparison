@@ -63,7 +63,6 @@ def dijkstra(graph, start, goal):
                 heapq.heappush(priority_queue, (distance, neighbor, path + [neighbor]))
 
     return None
-
 def astar(graph, start, goal, heuristic):
     """
     """

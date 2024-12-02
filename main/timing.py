@@ -1,22 +1,10 @@
 "Time"
 
 import time
-from typing import Callable, Dict, List, Tuple, Optional
 
-def time_algorithm(algorithm: Callable, graph: Dict[str, List[Tuple[str, float]]], start: str, goal: str, **kwargs) -> Optional[Tuple[List[str], float, float]]:
+def time_algorithm(algorithm, graph, start, goal, **kwargs):
     """
-    Вимірює час виконання алгоритму пошуку шляху.
-
-    Args:
-        algorithm (Callable): Алгоритм пошуку шляху.
-        graph (dict): Граф у форматі словника з вагами.
-        start (str): Початкова вершина.
-        goal (str): Цільова вершина.
-        **kwargs: Додаткові аргументи для алгоритму (наприклад, heuristic для A*).
-
-    Returns:
-        tuple[list[str], float, float]: Шлях, сумарна вага та час виконання.
-                                       Повертає None, якщо шляху немає.
+    Function for timing algorithms.
     """
     start_time = time.perf_counter()
     result = algorithm(graph, start, goal, **kwargs)
