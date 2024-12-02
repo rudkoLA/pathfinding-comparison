@@ -199,7 +199,7 @@ def floyd_warshall(graph, start, end):
             - path (list): List of nodes representing the shortest path, or None if no path exists.
     """
     if start not in graph or end not in graph:
-        return None
+        return [], float('inf')
 
     nodes = graph.keys()
     dist = {u: {v: float('inf') for v in nodes} for u in nodes}
@@ -228,7 +228,8 @@ def floyd_warshall(graph, start, end):
         return path
 
     shortest_path = reconstruct_path(start, end)
-    return shortest_path
+    return shortest_path, dist[start][end] if shortest_path else float('inf')
+
 
 
 def spfa(graph, start, end):
