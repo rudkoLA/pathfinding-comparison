@@ -5,6 +5,9 @@ import app
 
 
 def main():
+    """
+    Main function for this project.
+    """
     root = tk.Tk()
     title_label = ttk.Label(root, text="Пошук найкоротшого шляху в Графах", \
                             font=("Arial", 18), background="#F0F8FF")
