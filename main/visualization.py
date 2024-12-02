@@ -4,8 +4,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def visualize_graph(graph: Dict[str, List[Tuple[str, float]]],\
-                    directed: bool = False, path: Optional[List[str]] = None):
+def visualize_graph(graph: dict[str, list[tuple[str, float]]],\
+                    directed: bool = False, path = None):
     """
 
     >>> graph = {
