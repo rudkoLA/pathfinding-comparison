@@ -1,3 +1,6 @@
+'''graph generator '''
+
+
 import random
 import string
 
