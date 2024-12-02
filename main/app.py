@@ -181,7 +181,7 @@ def plot_times(times):
     execution_times = [t for t in times.values() if t is not None]
 
     if not execution_times:
-        return
+        return None
 
     plt.figure(figsize=(10, 6))
     plt.bar(algorithm_names, execution_times, color='skyblue')
