@@ -1,4 +1,5 @@
-'головний модуль'
+'''main'''
+
 import tkinter as tk
 from tkinter import ttk
 import app
