@@ -1,16 +1,16 @@
-'''створюємо алгоритми для пошуку шляхів в графах'''
+'''Algoritms for finding shortest path'''
 
-import heapq
-
-def bfs(graph: dict, start, end) -> tuple[list, int]:
+def bfs(graph, start, end):
     """
-    :param graph: dict, A dictionary where keys are nodes and values are 
-    lists of tuples (neighbor, weight).
-    :param start: int, The starting node.
-    :param end: int, The goal node.
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
+    
+    param start: The starting node
+    
+    param end: The goal node
 
-    :return: tuple[list[int], int], shortest path, which is presented in a 
-    tuple (path: list of nodes, weight).
+    returns shortest path, which is presented in a 
+    tuple (path: list of nodes, weight)
+    
     >>> bfs({\
         1: [(2, 3), (3, 1)], \
         2: [(1, 3), (5, 4)], \
@@ -21,12 +21,17 @@ def bfs(graph: dict, start, end) -> tuple[list, int]:
         }, 1, 6)
     ([1, 3, 6], 4)
     """
+    
     priority_queue = [(0, [start])]
-
     visited = {}
 
     while priority_queue:
-        current_weight, path = heapq.heappop(priority_queue)
+        min_index = 0
+        for i in range(1, len(priority_queue)):
+            if priority_queue[i][0] < priority_queue[min_index][0]:
+                min_index = i
+        
+        current_weight, path = priority_queue.pop(min_index)
         node = path[-1]
 
         if node == end:
@@ -39,20 +44,19 @@ def bfs(graph: dict, start, end) -> tuple[list, int]:
         for neighbor, weight in graph.get(node, []):
             if neighbor not in path:
                 new_path = path + [neighbor]
-                heapq.heappush(priority_queue, (current_weight + weight, new_path))
-
+                priority_queue.append((current_weight + weight, new_path))
     return [], float('inf')
 
-
-def dfs(graph: dict, start, end) -> tuple[list, int]:
+def dfs(graph, start, end):
     """
-    :param graph: dict, A dictionary where keys are nodes and values are 
-    lists of tuples (neighbor, weight).
-    :param start: int, The starting node.
-    :param end: int, The goal node.
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
+    
+    param start: The starting node
+    
+    param end: The goal node
 
-    :return: tuple[list[int], int], shortest path, which is presented in a 
-    tuple (path: list of nodes, weight).
+    returns shortest path, which is presented in a 
+    tuple (path: list of nodes, weight)
     >>> dfs({\
         1: [(2, 3), (3, 1)], \
         2: [(1, 3), (5, 4)], \
@@ -66,6 +70,7 @@ def dfs(graph: dict, start, end) -> tuple[list, int]:
     visited = {}
 
     def dfs_algorithm(node: int, path: list[int], weight: int) -> tuple[list[int], int] | None:
+        result = []
         if node in visited and visited[node] <= weight:
             return None
 

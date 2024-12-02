@@ -1,12 +1,10 @@
 '''visualization'''
 
-from typing import Optional
 import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def visualize_graph(graph: dict[str, list[tuple[str, float]]],\
-                    directed: bool = False, path: Optional[list[str]] = None):
+def visualize_graph(graph, directed, path):
     """
 
     >>> graph = {
