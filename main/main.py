@@ -1,16 +1,17 @@
 'головний модуль'
 import tkinter as tk
-from tkinter import ttk 
+from tkinter import ttk
 import app
 
 
 def main():
     root = tk.Tk()
-    title_label = ttk.Label(root, text="Пошук найкоротшого шляху в Графах", font=("Arial", 18), background="#F0F8FF")
+    title_label = ttk.Label(root, text="Пошук найкоротшого шляху в Графах", \
+                            font=("Arial", 18), background="#F0F8FF")
     title_label.pack(pady=20)
 
     root.configure(bg="#F0F8FF")
-    
+
     icon_photo = tk.PhotoImage(file='logo.png')
     root.iconphoto(True, icon_photo)
     screen_width = root.winfo_screenwidth()

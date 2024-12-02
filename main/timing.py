@@ -4,6 +4,7 @@ import time
 
 def time_algorithm(algorithm, graph, start, goal, **kwargs):
     """
+    Function for timing algorithms.
     """
     start_time = time.perf_counter()
     result = algorithm(graph, start, goal, **kwargs)
