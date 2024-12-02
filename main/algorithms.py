@@ -1,6 +1,8 @@
 '''створюємо алгоритми для пошуку шляхів в графах'''
 
-def bfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
+import heapq
+
+def bfs(graph: dict, start, end) -> tuple[list, int]:
     """
     :param graph: dict, A dictionary where keys are nodes and values are 
     lists of tuples (neighbor, weight).
@@ -19,24 +21,30 @@ def bfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
         }, 1, 6)
     ([1, 3, 6], 4)
     """
-    queue = [([start], 0)]
+    priority_queue = [(0, [start])]
 
-    while queue:
-        path, current_weight = queue.pop(0)
+    visited = {}
+
+    while priority_queue:
+        current_weight, path = heapq.heappop(priority_queue)
         node = path[-1]
 
         if node == end:
             return path, current_weight
 
+        if node in visited and visited[node] <= current_weight:
+            continue
+        visited[node] = current_weight
+
         for neighbor, weight in graph.get(node, []):
             if neighbor not in path:
                 new_path = path + [neighbor]
-                queue.append((new_path, current_weight + weight))
+                heapq.heappush(priority_queue, (current_weight + weight, new_path))
 
     return [], float('inf')
 
 
-def dfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
+def dfs(graph: dict, start, end) -> tuple[list, int]:
     """
     :param graph: dict, A dictionary where keys are nodes and values are 
     lists of tuples (neighbor, weight).
@@ -55,7 +63,13 @@ def dfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
         }, 1, 6)
     ([1, 3, 6], 4)
     """
+    visited = {}
+
     def dfs_algorithm(node: int, path: list[int], weight: int) -> tuple[list[int], int] | None:
+        if node in visited and visited[node] <= weight:
+            return None
+
+        visited[node] = weight
         path.append(node)
 
         if node == end:
@@ -66,9 +80,7 @@ def dfs(graph: dict, start: int, end: int) -> tuple[list[int], int]:
                 if neighbor not in path:
                     sub_result = dfs_algorithm(neighbor, path, weight + edge_weight)
                     if sub_result:
-                        if result is None:
-                            result = sub_result
-                        if sub_result[1] < result[1]:
+                        if result is None or sub_result[1] < result[1]:
                             result = sub_result
 
         path.pop()
