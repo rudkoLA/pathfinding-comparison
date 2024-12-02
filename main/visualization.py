@@ -3,7 +3,9 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-def visualize_graph(graph, directed, path):
+
+def visualize_graph(graph: Dict[str, List[Tuple[str, float]]],\
+                    directed: bool = False, path: Optional[List[str]] = None):
     """
 
     >>> graph = {
