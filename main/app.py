@@ -1,4 +1,4 @@
-'графічний інтерфейс'
+'''графічний інтерфейс'''
 
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
