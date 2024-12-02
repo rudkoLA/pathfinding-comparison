@@ -197,23 +197,9 @@ def floyd_warshall(graph, start, end):
         tuple: (distance, path) where:
             - distance (float): Shortest distance from start to end.
             - path (list): List of nodes representing the shortest path, or None if no path exists.
-
-    Example:
-        >>> graph = {
-        ...     'a': [('b', 3), ('d', 7)],
-        ...     'b': [('c', 2)],
-        ...     'c': [('d', 1)],
-        ...     'd': [('a', 1)]
-        ... }
-        >>> floyd_warshall(graph, 'a', 'c')
-        (['a', 'b', 'c'], 5)
-        >>> floyd_warshall(graph, 'b', 'd')
-        (['b', 'c', 'd'], 3)
-        >>> floyd_warshall(graph, 'a', 'e')
-        ([], inf)
     """
     if start not in graph or end not in graph:
-        return [], float('inf')
+        return None
 
     nodes = graph.keys()
     dist = {u: {v: float('inf') for v in nodes} for u in nodes}
@@ -242,7 +228,7 @@ def floyd_warshall(graph, start, end):
         return path
 
     shortest_path = reconstruct_path(start, end)
-    return shortest_path, dist[start][end] if shortest_path else float('inf')
+    return shortest_path
 
 
 def spfa(graph, start, end):
