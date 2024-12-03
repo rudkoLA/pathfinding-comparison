@@ -21,7 +21,7 @@ def bfs(graph, start, end):
         }, 1, 6)
     ([1, 3, 6], 4)
     """
-    
+
     priority_queue = [(0, [start])]
     visited = {}
 
@@ -30,7 +30,7 @@ def bfs(graph, start, end):
         for i in range(1, len(priority_queue)):
             if priority_queue[i][0] < priority_queue[min_index][0]:
                 min_index = i
-        
+
         current_weight, path = priority_queue.pop(min_index)
         node = path[-1]
 
@@ -81,7 +81,7 @@ def dfs(graph, start, end):
             result = (list(path), weight)
         else:
             result = None
-            for neighbor, edge_weight in graph[node]:
+            for neighbor, edge_weight in graph.get(node, []):
                 if neighbor not in path:
                     sub_result = dfs_algorithm(neighbor, path, weight + edge_weight)
                     if sub_result:
@@ -89,7 +89,7 @@ def dfs(graph, start, end):
                             result = sub_result
 
         path.pop()
-        return result
+        return result if result is not None else ([], float('inf'))
 
     return dfs_algorithm(start, [], 0)
 
@@ -183,8 +183,8 @@ def bellman_ford(graph, start, goal):
 
     for _ in range(len(graph) - 1):
         for vertex in graph:
-            for neighbor, weight in graph[vertex]:
-                if distance[vertex] + weight < distance[neighbor]:
+            for neighbor, weight in graph.get(vertex, []):
+                if neighbor in distance and distance[vertex] + weight < distance[neighbor]:
                     distance[neighbor] = distance[vertex] + weight
                     predecessor[neighbor] = vertex
 
@@ -277,16 +277,17 @@ def spfa(graph, start, end):
     while queue:
         current_node = queue.pop()
 
-        for neighbor, weight in graph[current_node]:
-            new_weight = distances[current_node] + weight
-            old_weight = distances[neighbor]
+        for neighbor, weight in graph.get(current_node, []):
+            if neighbor in distances:
+                new_weight = distances[current_node] + weight
+                old_weight = distances[neighbor]
 
-            if new_weight < old_weight:
-                distances[neighbor] = new_weight
-                prev_nodes[neighbor] = current_node
+                if new_weight < old_weight:
+                    distances[neighbor] = new_weight
+                    prev_nodes[neighbor] = current_node
 
-                if neighbor not in queue:
-                    queue.append(neighbor)
+                    if neighbor not in queue:
+                        queue.append(neighbor)
 
     path = []
     current_node = end
