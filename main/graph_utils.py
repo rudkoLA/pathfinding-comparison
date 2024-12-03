@@ -41,6 +41,8 @@ def build_graph(edge_list, directed = False):
         graph.setdefault(a, []).append((b, weight))
         if not directed:
             graph.setdefault(b, []).append((a, weight))
+        else:
+            graph.setdefault(b, [])
     return graph
 
 

@@ -122,7 +122,7 @@ def run_algorithms(state, widgets):
     for name, algorithm in algorithms:
         result = time_algorithm(algorithm, state['graph'], start, goal)
 
-        if result:
+        if result[0]:
             path, total_weight, exec_time = result
             state['times'][name] = exec_time
             state['paths'][name] = path
