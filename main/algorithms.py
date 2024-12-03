@@ -95,84 +95,172 @@ def dfs(graph, start, end):
 
 def dijkstra(graph, start, goal):
     """
-    Виконує алгоритм Дейкстри для знаходження найкоротшого шляху
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
+    
+    param start: The starting node
+    
+    param end: The goal node
 
-    Аргументи:
-        graph (dict): Граф, представлений у вигляді словника
-        start (str): Початкова вершина.
-        goal (str): Цільова вершина.
+    returns shortest path, which is presented in a 
+    tuple (path: list of nodes, weight)
 
-    Повертає:
-        tuple: Кортеж, що містить шлях та час виконання.
-
-    Приклад:
     >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [('D', 1)], 'D': []}
     >>> dijkstra(graph, 'A', 'D')
     (['A', 'B', 'D'], 2)
     """
-    visited = set()
-    queue = [(0, start, [start])]
+    
+    distances = {vertex: float('infinity') for vertex in graph}
+    distances[start] = 0
 
-    while queue:
-        queue.sort(key=lambda x: x[0])
-        cost, vertex, path = queue.pop(0)
-        if vertex == goal:
-            return path, cost
-        if vertex not in visited:
-            visited.add(vertex)
-            neighbors = graph.get(vertex, [])
-            for neighbor, weight in neighbors:
-                if neighbor not in visited:
-                    queue.append((cost + weight, neighbor, path + [neighbor]))
-    return [], float('inf')
+    previous_vertices = {vertex: None for vertex in graph}
 
+    unvisited = list(graph.keys())
+
+    while unvisited:
+        current_vertex = None
+        current_distance = float('infinity')
+        for vertex in unvisited:
+            if distances[vertex] < current_distance:
+                current_distance = distances[vertex]
+                current_vertex = vertex
+
+        if current_vertex is None:
+            break
+
+        if current_vertex == goal:
+            break
+
+        for neighbor, weight in graph[current_vertex]:
+            distance = distances[current_vertex] + weight
+
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous_vertices[neighbor] = current_vertex
+
+        unvisited.remove(current_vertex)
+
+    path = []
+    current = goal
+    while previous_vertices[current] is not None:
+        path.insert(0, current)
+        current = previous_vertices[current]
+    if distances[goal] != float('infinity'):
+        path.insert(0, current)
+
+    return path, distances[goal]
 
 def astar(graph, start, goal):
     """
-    Виконує алгоритм A* для знаходження найкоротшого шляху
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
     
-    Аргументи:
-        graph (dict): Граф, представлений у вигляді словника
-        start (str): Початкова вершина.
-        goal (str): Цільова вершина.
+    param start: The starting node
+    
+    param end: The goal node
 
-    Повертає:
-        tuple: Кортеж, що містить шлях та час виконання.
+    returns shortest path, which is presented in a 
+    tuple (path: list of nodes, weight)
 
-    Приклад:
     >>> graph = {'A': [('B', 1), ('C', 1)], 'B': [('D', 1)], 'C': [('D', 1)], 'D': []}
     >>> astar(graph, 'A', 'D')
     (['A', 'B', 'D'], 2)
     """
-    visited = set()
-    queue = [(0, start, [start])]
-    while queue:
-        queue.sort(key=lambda x: x[0])
-        cost, vertex, path = queue.pop(0)
-        if vertex == goal:
-            return path, cost
-        if vertex not in visited:
-            visited.add(vertex)
-            neighbors = graph.get(vertex, [])
+    
+    def find_min_edge_weight(graph):
+        min_weight = float('infinity')
+        for neighbors in graph.values():
             for neighbor, weight in neighbors:
-                if neighbor not in visited:
-                    queue.append((cost + weight, neighbor, path + [neighbor]))
-    return [], float('inf')
+                if weight < min_weight:
+                    min_weight = weight
+        return min_weight if min_weight != float('infinity') else 0
+
+    min_edge_weight = find_min_edge_weight(graph)
+
+    def compute_min_steps(graph, goal):
+        reverse_graph = {vertex: [] for vertex in graph}
+        for vertex, neighbors in graph.items():
+            for neighbor, _ in neighbors:
+                reverse_graph[neighbor].append(vertex)
+        
+        min_steps = {vertex: float('infinity') for vertex in graph}
+        min_steps[goal] = 0
+        
+        queue = [goal]
+
+        while queue:
+            current = queue.pop(0)
+            for neighbor in reverse_graph[current]:
+                if min_steps[neighbor] > min_steps[current] + 1:
+                    min_steps[neighbor] = min_steps[current] + 1
+                    queue.append(neighbor)
+        
+        return min_steps
+
+    min_steps = compute_min_steps(graph, goal)
+
+    heuristic = {}
+    for vertex in graph:
+        if min_steps[vertex] != float('infinity'):
+            heuristic[vertex] = min_edge_weight * min_steps[vertex]
+        else:
+            heuristic[vertex] = float('infinity')
+
+    def a_star_with_heuristic(graph, start, goal, heuristic):
+        open_set = set([start])
+        closed_set = set()
+        g_scores = {vertex: float('infinity') for vertex in graph}
+        g_scores[start] = 0
+
+        f_scores = {vertex: float('infinity') for vertex in graph}
+        f_scores[start] = heuristic[start]
+
+        came_from = {vertex: None for vertex in graph}
+
+        while open_set:
+            current = min(open_set, key=lambda vertex: f_scores[vertex])
+
+            if current == goal:
+                path = []
+                while current:
+                    path.insert(0, current)
+                    current = came_from[current]
+                return path, g_scores[goal]
+
+            open_set.remove(current)
+            closed_set.add(current)
+
+            for neighbor, cost in graph[current]:
+                if neighbor in closed_set:
+                    continue
+
+                tentative_g = g_scores[current] + cost
+
+                if neighbor not in open_set:
+                    open_set.add(neighbor)
+                elif tentative_g >= g_scores[neighbor]:
+                    continue
+
+                came_from[neighbor] = current
+                g_scores[neighbor] = tentative_g
+                f_scores[neighbor] = g_scores[neighbor] + heuristic.get(neighbor, float('infinity'))
+
+        return None, float('infinity')
+
+    path, distance = a_star_with_heuristic(graph, start, goal, heuristic)
+
+    return path, distance
 
 
 def bellman_ford(graph, start, goal):
     """
-    Виконує алгоритм Беллмана-Форда для знаходження найкоротшого шляху.
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
+    
+    param start: The starting node
+    
+    param end: The goal node
 
-    Аргументи:
-        graph (dict): Граф, представлений у вигляді словника
-        start (str): Початкова вершина.
-        goal (str): Цільова вершина.
+    returns shortest path, which is presented in a 
+    tuple (path: list of nodes, weight)
 
-    Повертає:
-        tuple: Кортеж, що містить шлях та час виконання.
-
-    Приклад:
     >>> graph = {'A': [('B', 1)], 'B': [('C', 1)], 'C': [('A', 1), ('D', 1)], 'D': []}
     >>> bellman_ford(graph, 'A', 'D')
     (['A', 'B', 'C', 'D'], 3)
@@ -203,17 +291,15 @@ def bellman_ford(graph, start, goal):
 
 def floyd_warshall(graph, start, end):
     """
-    Implements the Floyd-Warshall algorithm for a graph in list format.
+    Implements the Floyd-Warshall algorithm
 
-    Args:
-        graph (dict): Graph as an list where graph[u] is a list of tuples (v, weight).
-        start (str): The starting node.
-        end (str): The ending node.
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
+    
+    param start: The starting node
+    
+    param end: The goal node
 
-    Returns:
-        tuple: (distance, path) where:
-            - distance (float): Shortest distance from start to end.
-            - path (list): List of nodes representing the shortest path, or None if no path exists.
+    returns shortest path, which is presented in a uple (path: list of nodes, weight)
     """
     if start not in graph or end not in graph:
         return [], float('inf')
@@ -251,17 +337,16 @@ def floyd_warshall(graph, start, end):
 
 def spfa(graph, start, end):
     """
-    Виконує алгоритм Shortest Path Faster Algorithm (SPFA) для знаходження найкоротшого шляху.
+    Implements the  Shortest Path Faster Algorithm (SPFA)
 
-    Аргументи:
-        graph (dict): Граф, представлений у вигляді словника
-        start (str): Початкова вершина.
-        end (str): Цільова вершина.
+    param graph: dict, A dictionary where keys are tuple of nodes and values 
+    
+    param start: The starting node
+    
+    param end: The goal node
 
-    Повертає:
-        tuple: Кортеж, що містить шлях та час виконання.
+    returns shortest path, which is presented in a uple (path: list of nodes, weight)
 
-    Приклад:
     >>> graph = {'A': [('B', 1)], 'B': [('C', 1)], 'C': [('A', 1), ('D', 1)], 'D': []}
     >>> spfa(graph, 'A', 'D')
     (['A', 'B', 'C', 'D'], 3)
